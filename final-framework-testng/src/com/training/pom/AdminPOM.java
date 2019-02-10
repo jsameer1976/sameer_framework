@@ -2,11 +2,14 @@ package com.training.pom;
 
 import java.util.List;
 
-import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AdminPOM {
 	private WebDriver driver;
@@ -46,8 +49,11 @@ public class AdminPOM {
 	@FindBy(xpath = "//input[@id='title']")
 	private WebElement PostTitle;
 
-	@FindBy(xpath = "//input[@id='original_publish']")
+	@FindBy(xpath = "//input[@id='publish']")
 	private WebElement PostPublishButton;
+	
+	/*@FindBy(xpath = "//div[@id='publishing-action']")
+	private WebElement PostPublishButton;*/
 
 	@FindBy(xpath = "//textarea[@id='content']")
 	private WebElement PostBody;
@@ -94,9 +100,18 @@ public class AdminPOM {
 	}
 
 	public void clickPublishButton() {
-		JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
-		javascriptExecutor.executeScript("arguments[0].click();", PostPublishButton);
+		PostPublishButton.submit();
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Alert alert=driver.switchTo().alert();
+		System.out.println(alert.getText());
+		alert.accept();
 		PostPublishButton.click();
+		WebDriverWait wait=new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='save'][@value='Update']")));
 	}
 
 	public void clickPostLink() {

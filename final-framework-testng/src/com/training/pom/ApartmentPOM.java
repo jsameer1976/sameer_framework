@@ -9,7 +9,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ApartmentPOM {
@@ -25,9 +24,16 @@ public class ApartmentPOM {
 
 	@FindBy(xpath = "//input[@name='your-name']")
 	private WebElement Name;
+	
+	
+	@FindBy(xpath = "//input[@name='your-name']/..//*[@role='alert']")
+	private WebElement NameRequiredErrorMessage;
 
 	@FindBy(xpath = "//input[@name='your-email']")
 	private WebElement Email;
+	
+	@FindBy(xpath = "//input[@name='your-email']/..//*[@role='alert']")
+	private WebElement EmailRequiredErrorMessage;
 
 	@FindBy(xpath = "//textarea[@name='your-message']")
 	private WebElement Comments;
@@ -59,15 +65,19 @@ public class ApartmentPOM {
 	@FindBy(xpath = "//span[text()='Property type']/..")
 	private WebElement PropertyType;
 
-	@FindBy(xpath = "//li[text()='Property type']/..")
+	@FindBy(xpath = "//li[text()='Property type']/../li")
 	private List<WebElement> PropertyTypeOptions;
 
-	@FindBy(xpath = "//li[text()='Any Regions']/..")
+	@FindBy(xpath = "//li[text()='Any Regions']/../li")
 	private List<WebElement> RegionOptions;
 
-	// @FindBy(xpath = "//select[@name='tax-region']")
+
 	@FindBy(xpath = "//span[text()='Any Regions']/..")
 	private WebElement TaxRegion;
+	
+	
+	 @FindBy(xpath = "//select[@name='tax-region']")
+		private WebElement TaxRegion1;
 
 	@FindBy(xpath = "//input[@class='chosen-search-input']")
 	private List<WebElement> TaxRegionSearchInput;
@@ -84,6 +94,10 @@ public class ApartmentPOM {
 	// input[@value='Send']/following-sibling::span
 	@FindBy(xpath = "//input[@value='Send']/following-sibling::span")
 	private WebElement MessageSentloader;
+	
+	//span[@class='ajax-loader']
+	@FindBy(xpath = "//span[contains(@class,'ajax-loader')]")
+	private WebElement ajexLoader;
 
 	public boolean isImagePageDisplayed(String imageName) {
 		return driver.findElement(By.xpath("//h3[contains(text(),'" + imageName + " - Overview')]")).isDisplayed();
@@ -96,6 +110,11 @@ public class ApartmentPOM {
 	}
 
 	public String getCalculatorOutput() {
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return CalculatorOutput.getText();
 	}
 
@@ -104,8 +123,23 @@ public class ApartmentPOM {
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		/*WebDriverWait wait=new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.attributeToBe(ajexLoader, "class", "ajax-loader"));*/
+	}
+	
+	public boolean isElementHighlighted(String element) {
+		WebDriverWait wait=new WebDriverWait(driver, 10);
+		
+		if(element.equalsIgnoreCase("name"))
+		{
+			return wait.until(ExpectedConditions.attributeToBe(Name, "aria-invalid", "true"));
+			
+		}
+		
+		else {
+			return wait.until(ExpectedConditions.attributeToBe(Email, "aria-invalid", "true"));
 		}
 	}
 
@@ -125,11 +159,11 @@ public class ApartmentPOM {
 		System.out.println("selected property: " + propertyName);
 		PropertyType.click();
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		for (WebElement element : PropertyTypeOptions) {
 			System.out.println("element: " + element.getText());
 			if (element.getText().contains(propertyName)) {
@@ -143,12 +177,15 @@ public class ApartmentPOM {
 	public void selectTaxRegion(String taxRegion) {
 		System.out.println("selected property: " + taxRegion);
 		TaxRegion.click();
+		
+		
+		
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		for (WebElement element : RegionOptions) {
 			System.out.println("element: " + element.getText());
 			if (element.getText().contains(taxRegion)) {
@@ -210,6 +247,33 @@ public class ApartmentPOM {
 
 	public void enterInterest(String interest) {
 		Interest.sendKeys(interest);
+	}
+	
+	public String getErrorMessage(String requiredField) {
+		if(requiredField.equalsIgnoreCase("name"))
+		{
+			return NameRequiredErrorMessage.getText();
+		}
+		
+		else {
+			return EmailRequiredErrorMessage.getText();
+		}
+	}
+	
+	public String getErrMessage(String requiredField) {
+		WebElement field =null;
+		if(requiredField.equalsIgnoreCase("sale Price"))
+		{
+			field = SalePrice;
+		} else if(requiredField.equalsIgnoreCase("loan Term"))
+		{
+			field = LoanTerms;
+		}else if(requiredField.equalsIgnoreCase("interest rate"))
+		{
+			field = Interest;
+		}	
+		return field.getAttribute("validationMessage");
+
 	}
 
 }

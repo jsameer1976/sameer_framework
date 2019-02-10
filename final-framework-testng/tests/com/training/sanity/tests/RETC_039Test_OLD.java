@@ -20,7 +20,7 @@ import com.training.pom.RETC_039POM;
 import com.training.utility.DriverFactory;
 import com.training.utility.DriverNames;
 
-public class RETC_039Test {
+public class RETC_039Test_OLD {
 
 		private WebDriver driver;
 		private String baseUrl;
@@ -77,12 +77,12 @@ public class RETC_039Test {
 			RETC039.EnterBodyTextBox("Add for purchase");
 			RETC039.CategoryClick();
 			
-			Robot robot = new Robot();
-			robot.keyPress(KeyEvent.VK_PAGE_UP);
+			//Robot robot = new Robot();
+			//robot.keyPress(KeyEvent.VK_PAGE_UP);
 			
-			RETC039.WaitForPublish();
-			RETC039.Publish();
-			RETC039.WaitPostPublish();
+			//RETC039.WaitForPublish();
+			//RETC039.Publish();
+			//RETC039.WaitPostPublish();
 			
 			String ActualResult = RETC039.PostPublish();
 			Assert.assertEquals(ActualResult, ExpectedResult);
